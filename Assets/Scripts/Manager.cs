@@ -1,4 +1,7 @@
 ﻿using UnityEngine;
+#if UNITY_2019_3_OR_NEWER
+using UnityEngine.SceneManagement;
+#endif
 
 public class Manager : MonoBehaviour
 {
@@ -8,36 +11,13 @@ public class Manager : MonoBehaviour
 	// タイトル
 	private GameObject title;
 
-	private bool leaderBoardButton;
-	private bool ghostButton;
-
 	 void Start ()
 	{
 		// Titleゲームオブジェクトを検索し取得する
 		title = GameObject.Find ("Title");
-	}
-	
-	void OnGUI ()
-	{
-		// ゲーム中ではなく、タッチまたはマウスクリック直後であればtrueを返す。
-		if (!IsPlaying()) {
-			drawButton();
-			// 画面タップでゲームスタート
-			if ( Event.current.type == EventType.MouseDown) 
-				GameStart (false);
+	}	 
 
-			// ランキングボタンが押されたら
-			if ( leaderBoardButton )
-				Application.LoadLevel("LeaderBoard");
-
-			//—--ゴーストボタンが押下場合の挙動定義---------
-			if ( ghostButton )
-				GameStart (true);
-			//----------------------------------------
-		}
-	}
-
-	void GameStart (bool withGhost)
+	public void GameStart (bool withGhost)
 	{
 		// ゲームスタート時に、タイトルを非表示にしてプレイヤーを作成する
 		title.SetActive (false);
@@ -57,7 +37,11 @@ public class Manager : MonoBehaviour
 	public void GameOver ()
 	{
 		FindObjectOfType<Score> ().Save ();
-		Application.LoadLevel ("SaveScore");
+#if UNITY_2019_3_OR_NEWER
+		SceneManager.LoadScene("SaveScore");
+#else
+		Application.LoadLevel("SaveScore");
+#endif
 		// ゲームオーバー時に、タイトルを表示する
 		//title.SetActive (true);
 	}
@@ -68,16 +52,18 @@ public class Manager : MonoBehaviour
 		return title.activeSelf == false;
 	}
 
-	private void drawButton() {
-		// ボタンの設置
-		int btnW = 140, btnH = 50;
-		GUI.skin.button.fontSize = 18;
-		leaderBoardButton = GUI.Button( new Rect(0*btnW, 0, btnW, btnH), "Leader Board" );
+	public void OnClickLeaderBoardButton(){
+		#if UNITY_2019_3_OR_NEWER
+			SceneManager.LoadScene("LeaderBoard");
+		#else
+			Application.LoadLevel("LeaderBoard");
+		#endif
+	}
 
+	public void OnClickGhost() {
 		//---Bg_ghost.csでゴーストデータを取得できたら、ゴーストボタンを表示する-------------
 		if (Bg_ghost.readyGhost == true) {
-				ghostButton = GUI.Button (new Rect (btnW, 0, btnW, btnH), "Ghost");
+			GameStart (true);
 		}
-		//--------------------------------------------------------------------------
 	}
 }
