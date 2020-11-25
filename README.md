@@ -1,6 +1,6 @@
 # NCMB2dst_comp
 
-## はじめに
+## 概要
 本プロジェクトはUnityの[2D Shooting Game](https://github.com/unity3d-jp-tutorials/2d-shooting-game/wiki)に　オンラインランキング・ゴースト機能を追加したデモを楽しめるものです。
 サーバーには[ニフクラ mobile backend](https://mbaas.nifcloud.com)を利用します。
 
@@ -8,18 +8,97 @@
 
 http://www.slideshare.net/fumisatokawahara/unity-58145478
 
-※Unity 2019.2.17f1での動作を確認しています
+## ニフクラmobile backendって何？？
+スマートフォンアプリのバックエンド機能（プッシュ通知・データストア・会員管理・ファイルストア・SNS連携・位置情報検索・スクリプト）が**開発不要**、しかも基本**無料**(注1)で使えるクラウドサービス！今回はデータストアを体験します
 
-## ※自分でニフクラ mobile backendを利用する方へ
+注1：詳しくは[こちら](https://mbaas.nifcloud.com/function.htm)をご覧ください
 
-ニフクラ mobile backendを使われる際は自分のプロジェクトにSDKを導入する必要があります。
-下記のクイックスタートからそちらを行ってください
 
-https://mbaas.nifcloud.com/doc/current/introduction/quickstart_unity.html
+## 動作確認環境
 
-## スコア保存
+* Unity 2020.1.8f1での動作を確認しています
 
-### スコア保存のコード説明
+## 手順
+### 1. [ニフクラmobile backend](https://mbaas.nifcloud.com/)の会員登録とログイン→アプリ作成
+
+* 上記リンクから会員登録（無料）をします。登録ができたらログインをすると下図のように「アプリの新規作成」画面が出るのでアプリを作成します
+
+![画像3](readme-img/register.png)
+
+* アプリ作成されると下図のような画面になります
+* この２種類のAPIキー（アプリケーションキーとクライアントキー）は次のステップで使用します。 
+
+![画像4](/readme-img/004.png)
+
+### 2. GitHubからサンプルプロジェクトの<a href="https://github.com/NIFCloud-mbaas/NCMB2dst_comp/archive/master.zip">ダウンロード</a>
+
+* 上記のリンクをクリックして、プロジェクトをダウンロード下さい。
+
+### 3. Unityでアプリを起動
+
+* ダウンロードしたフォルダを解凍し、Unityから開いてください。その後、stageシーンを開いてください。
+
+### 4. APIキーの設定
+
+* stageシーンの`NCMBSettings`を編集します
+* 先程[ニフクラmobile backend](https://mbaas.nifcloud.com/)のダッシュボード上で確認したAPIキーを貼り付けます
+
+![画像07](/readme-img/ApiKey.png)
+
+* 貼り付けたらシーンを保存して下さい。
+
+### 5. 動作確認
+
+##### iOS端末へのビルド
+
+* iOSビルド手順は以下のとおりです。  
+iOS端末でビルドを行うには、Unityで.xcodeprojファイルを作成します。
+- 「Build Settings」へ戻り、Platformで「iOS」を選択 -> 「Switch Platform」をクリックします。
+
+<img src="readme-img/unity_ios_00001.png" width="700" alt="iOS" />
+
+- ボタンが「Build」に変わったらクリックします。アプリ名を入力するとビルドが開始されるので、完了したらXcodeで開いてください。
+
+- XcodeでPush Notificationの追加とプロビジョニングファイルの設定を行う必要があります。[iOSのドキュメント](https://mbaas.nifcloud.com/doc/current/push/basic_usage_ios.html#Xcodeでの対応)の「5.1 Xcodeでの対応」を実装してください。
+
+
+###### Xcodeの追加設定
+
+  * iOSであり、Unity SDK v4.0.4以上の場合、Xcode側にて「WebKit.framework」「UserNotifications.framework」を追加する必要があります。
+  * Xcodeで「Unity-iPhone」-> General -> TARGETで「UnityFramework」を選択します。追加されているライブラリ一覧の下にある「＋」をクリックします。
+  <img src="readme-img/add_frameworks_UnitySDK4.0.4.png" width="612"  alt="フレームワークの追加" />
+  * 検索窓にて「Web」と入力し、「WebKit.framework」があるので選択しAddをクリックします。
+
+<img src="readme-img/Webview_flow2.png" width="420" height="480" alt="リッチプッシュ設定方法2" />
+
+* 「UserNotifications.framework」ライブラリも同じように検索して追加します
+
+<img src="readme-img/unity_ios_00003.png" width="420" alt="iOS" />
+
+ライブラリ一覧に追加されていることが確認できれば設定完了です。
+
+※注意１: Unity SDK v4.2.0以上を使用している場合、上の２つに加えて「AuthencationServices.framework」も追加する必要があります。
+
+<img src="readme-img/xcode_settings_005.png" width="680px;"/>
+
+* 「Build Phases」 タブで「AuthenticationServices.framework」を「Optional」にします。  
+<img src="readme-img/optional_AuthenticationServices.framework.png" width="680px;"/>
+
+※注意２： Unity 2019.3未満の場合は、以下の画像のように TARGET->「Unity-iPhone」でフレームワークを追加するようにしてください。
+こちらも「WebKit.framework」「UserNotifications.framework」「AuthenticationServices.framework」を追加する必要があります。
+
+<img src="readme-img/target_Unity-iPhone.png" width="200px;"/>
+
+- 上記が完了しましたら、iOS動作確認は可能となります。
+
+* Unity画面で上部真ん中の実行ボタン（さんかくの再生マーク）をクリックしして、ゲームを体験しましょう！
+
+<img src="readme-img/start.png" width=600px>
+<br/>
+
+#### スコア保存
+
+#### スコア保存のコード説明
 
 スコア保存のコードはAsset>Scriptsの「SaveScore.cs」にて行っています。
 下記のコードが、スコア保存に関するコードになります、ご参照ください。
@@ -54,7 +133,7 @@ public class SaveScore: MonoBehaviour {
 }
 ```
 
-### 走行ログについて
+#### 走行ログについて
 
 走行ログはゲームプレイ中にPlayerの座標を取得・配列化しておき、スコア保存時にサーバーに一緒に保存しています。
 コードとしてはAsset>Scriptsの「Player.cs」にて行っています。
@@ -85,9 +164,9 @@ public class Player: MonoBehaviour {
 }
 ```
 
-## オンラインランキングの表示
+#### オンラインランキングの表示
 
-### 構成要素説明
+#### 構成要素説明
 
 ランキングはAsset>Scenesの「 LeaderBoard 」 シーンで生成されています。
 下記にその構成要素と各役割を記します。
@@ -105,7 +184,7 @@ LeaderBoardシーンには以下のスクリプトが含まれています。
 - 各種見出しGUITextオブジェクト
   - 順位とプレイヤー名、スコアを表示するGUITextオブジェクト
 
-### ロジック説明
+## ロジック説明
 
 ニフクラ mobile backendから子スコアのデータを取得するロジックは
 Asset>Scripts 「LeaderBoard.cs」に記載されています。
